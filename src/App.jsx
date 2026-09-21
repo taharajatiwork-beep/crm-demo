@@ -14,6 +14,7 @@ import CaptureFlow from './components/CaptureFlow';
 import Reports from './components/Reports';
 import CallLog from './components/CallLog';
 import SMSPanel from './components/SMSPanel';
+import SmartRules from './components/SmartRules';
 import { ToastContainer } from './components/Toast';
 import PageLoader from './ui/PageLoader';
 import { deals as initialDeals, contacts as initialContacts } from './data';
@@ -130,6 +131,8 @@ function App() {
         return <CallLog setActivePage={navigateTo} setSelectedDeal={setSelectedDeal} showToast={showToast} />;
       case 'sms':
         return <SMSPanel showToast={showToast} />;
+      case 'smartRules':
+        return <SmartRules deals={initialDeals} onSelectDeal={(id) => { setSelectedDeal(id); navigateTo('deal'); }} />;
       case 'deal':
         return <DealDetail dealId={selectedDeal} setActivePage={navigateTo} showToast={showToast} />;
       default:

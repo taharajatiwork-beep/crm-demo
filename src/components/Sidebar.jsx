@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LayoutDashboard, Kanban, Users, FileText, Settings, Bell, Search, ChevronDown, LogOut, Menu, X, Sun, GitBranch, Phone, MessageSquare } from 'lucide-react';
+import { LayoutDashboard, Kanban, Users, FileText, Settings, Bell, Search, ChevronDown, LogOut, Menu, X, Sun, GitBranch, Phone, MessageSquare, Brain } from 'lucide-react';
 
 const menuItems = [
   { id: 'today', icon: Sun, label: 'امروز' },
@@ -9,6 +9,7 @@ const menuItems = [
   { id: 'contacts', icon: Users, label: 'مشتریان' },
   { id: 'callLog', icon: Phone, label: 'تماس‌ها' },
   { id: 'sms', icon: MessageSquare, label: 'پیامک' },
+  { id: 'smartRules', icon: Brain, label: 'قوانین هوشمند' },
   { id: 'reports', icon: FileText, label: 'گزارش‌ها' },
 ];
 
