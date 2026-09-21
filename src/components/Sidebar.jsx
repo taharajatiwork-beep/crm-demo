@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LayoutDashboard, Kanban, Users, FileText, Settings, Bell, Search, ChevronDown, LogOut, Menu, X, Sun, GitBranch } from 'lucide-react';
+import { LayoutDashboard, Kanban, Users, FileText, Settings, Bell, Search, ChevronDown, LogOut, Menu, X, Sun, GitBranch, Phone } from 'lucide-react';
 
 const menuItems = [
   { id: 'today', icon: Sun, label: 'امروز' },
@@ -7,6 +7,7 @@ const menuItems = [
   { id: 'pipeline', icon: Kanban, label: 'تخته معاملات' },
   { id: 'workflows', icon: GitBranch, label: 'گردش کار پرونده‌ها' },
   { id: 'contacts', icon: Users, label: 'مشتریان' },
+  { id: 'callLog', icon: Phone, label: 'تماس‌ها' },
   { id: 'reports', icon: FileText, label: 'گزارش‌ها' },
 ];
 

@@ -635,3 +635,61 @@ export const stageProbabilities = {
   negotiation: 70,
   won: 100,
 };
+
+// ─── SMS Panel ─────────────────────────────────────────────────────────────
+
+export const smsTemplates = [
+  {
+    id: 1,
+    name: 'خوش‌آمدگویی',
+    category: '.intro',
+    body: 'با سلام {نام} عزیز، از شرکت {شرکت} ممنونیم که با ما در تماس هستید. خوشحالیم بتوانیم خدمت‌رسانی کنیم.',
+    variables: ['نام', 'شرکت'],
+  },
+  {
+    id: 2,
+    name: 'پیگیری اولیه',
+    category: 'followup',
+    body: '{نام} عزیز، پیرو صحبت‌های اخیر، خواستم پیگیر باشم. اگر سوال یا نیازی دارید در خدمت هستیم.',
+    variables: ['نام'],
+  },
+  {
+    id: 3,
+    name: 'یادآوری جلسه',
+    category: 'meeting',
+    body: '{نام} عزیز، یادآوری جلسه فردا ساعت {ساعت} در {مکان}. منتظر دیدار شما هستیم.',
+    variables: ['نام', 'ساعت', 'مکان'],
+  },
+  {
+    id: 4,
+    name: 'ارسال پیشنهاد',
+    category: 'proposal',
+    body: '{نام} عزیز، پیشنهاد قیمت شرکت {شرکت} برای پروژه «{پروژه}» ارسال شد. لطفاً بررسی فرمایید.',
+    variables: ['نام', 'شرکت', 'پروژه'],
+  },
+  {
+    id: 5,
+    name: 'تخفیف ویژه',
+    category: 'promotion',
+    body: '{نام} عزیز، به مناسبت {مناسبت}، تخفیف ویژه {درصد}٪ روی خدمات اعمال شده. فرصت محدود است!',
+    variables: ['نام', 'مناسبت', 'درصد'],
+  },
+  {
+    id: 6,
+    name: 'پیگیری قرارداد',
+    category: 'followup',
+    body: '{نام} عزیز، قرارداد شما با شرکت {شرکت} در مرحله {مرحله} قرار دارد. برای اطلاعات بیشتر تماس بگیرید.',
+    variables: ['نام', 'شرکت', 'مرحله'],
+  },
+];
+
+export const smsHistory = [
+  { id: 1, contactId: 1, contactName: 'علی محمدی', contactPhone: '۰۹۱۲۱۲۳۴۵۶۷', message: 'با سلام علی عزیز، از شرکت آلفا ممنونیم که با ما در تماس هستید.', status: 'delivered', date: '۱۴۰۵/۰۶/۲۱', time: '۱۰:۳۰', charCount: 58, templateId: 1 },
+  { id: 2, contactId: 2, contactName: 'سارا احمدی', contactPhone: '۰۹۱۹۸۷۶۵۴۳۲', message: 'سارا عزیز، پیرو صحبت‌های اخیر، خواستم پیگیر باشم.', status: 'delivered', date: '۱۴۰۵/۰۶/۲۰', time: '۱۵:۴۵', charCount: 45, templateId: 2 },
+  { id: 3, contactId: 3, contactName: 'رضا کریمی', contactPhone: '۰۹۱۱۱۱۱۱۱۱۱', message: 'رضا عزیز، یادآوری جلسه فردا ساعت ۱۰:۰۰ در دفتر مرکزی.', status: 'delivered', date: '۱۴۰۵/۰۶/۱۹', time: '۰۹:۰۰', charCount: 50, templateId: 3 },
+  { id: 4, contactId: 5, contactName: 'نیلوفر شریفی', contactPhone: '۰۹۱۹۳۳۳۳۳۳۳', message: 'نیلوفر عزیز، پیشنهاد قیمت شرکت اپسیلون ارسال شد.', status: 'pending', date: '۱۴۰۵/۰۶/۲۱', time: '۱۱:۰۰', charCount: 44, templateId: 4 },
+  { id: 5, contactId: 4, contactName: 'مهدی حسینی', contactPhone: '۰۹۱۲۲۲۲۲۲۲۲', message: 'مهدی عزیز، قرارداد شما در مرحله بررسی حقوقی قرار دارد.', status: 'failed', date: '۱۴۰۵/۰۶/۱۸', time: '۱۴:۲۰', charCount: 49, templateId: 6 },
+  { id: 6, contactId: 6, contactName: 'حسن عباسی', contactPhone: '۰۹۱۲۴۴۴۴۴۴۴۴', message: 'حسن عزیز، به مناسبت فصل جدید، تخفیف ویژه ۲۰٪ روی خدمات اعمال شده.', status: 'delivered', date: '۱۴۰۵/۰۶/۱۷', time: '۰۸:۱۵', charCount: 64, templateId: 5 },
+  { id: 7, contactId: 7, contactName: 'زهرا کاظمی', contactPhone: '۰۹۱۹۵۵۵۵۵۵۵', message: 'زهرا عزیز، پیرو صحبت‌های اخیر، خواستم پیگیر باشم.', status: 'delivered', date: '۱۴۰۵/۰۶/۱۶', time: '۱۶:۳۰', charCount: 45, templateId: 2 },
+  { id: 8, contactId: 8, contactName: 'امیر رستمی', contactPhone: '۰۹۱۲۶۶۶۶۶۶۶', message: 'امیر عزیز، قرارداد شما با شرکت تتا در مرحله فعال قرار دارد.', status: 'pending', date: '۱۴۰۵/۰۶/۱۵', time: '۱۲:۰۰', charCount: 55, templateId: 6 },
+];
