@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { X, Tag, Building2, User, Zap, Lightbulb, ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
-import { contacts, deals } from '../data';
+import { contacts, deals, stages } from '../data';
 
 // Smart suggestions based on existing data
 const companySuggestions = [...new Set(contacts.map(c => c.company))];
