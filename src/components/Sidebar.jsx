@@ -36,14 +36,14 @@ function SidebarContent({ activePage, setActivePage, isMobile, onClose }) {
 
       {/* Search */}
       <div className="px-4 py-3">
-        <div className="relative">
+        <button
+          onClick={() => window.dispatchEvent(new CustomEvent('command-palette-toggle'))}
+          className="w-full flex items-center gap-2 bg-dark-700 border border-dark-500 rounded-lg pr-10 pl-4 py-2 text-sm text-dark-300 hover:border-dark-400 transition-colors cursor-pointer text-right"
+        >
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-300" />
-          <input
-            type="text"
-            placeholder="جستجو... (⌘K)"
-            className="w-full bg-dark-700 border border-dark-500 rounded-lg pr-10 pl-4 py-2 text-sm text-dark-100 placeholder-dark-300 focus:outline-none focus:border-accent transition-colors"
-          />
-        </div>
+          <span>جستجو...</span>
+          <kbd className="mr-auto text-[10px] text-dark-400 bg-dark-600 border border-dark-500 rounded px-1.5 py-0.5 font-mono">⌘K</kbd>
+        </button>
       </div>
 
       {/* Navigation */}
