@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LayoutDashboard, Kanban, Users, FileText, Settings, Bell, Search, ChevronDown, LogOut, Menu, X, Sun } from 'lucide-react';
+import { LayoutDashboard, Kanban, Users, FileText, Settings, Bell, Search, ChevronDown, LogOut, Menu, X, Sun, Phone } from 'lucide-react';
 
 const menuItems = [
   { id: 'today', icon: Sun, label: 'امروز' },
@@ -68,6 +68,21 @@ function SidebarContent({ activePage, setActivePage, isMobile, onClose }) {
           </button>
         ))}
       </nav>
+
+      {/* Capture Flow CTA */}
+      <div className="px-3 pb-2">
+        <button
+          onClick={() => {
+            window.dispatchEvent(new CustomEvent('capture-flow-open'));
+            if (isMobile) onClose();
+          }}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all bg-success/10 text-success border border-success/20 hover:bg-success/15 hover:border-success/30"
+        >
+          <Phone className="w-5 h-5" />
+          <span className="font-medium">ثبت تماس</span>
+          <kbd className="mr-auto text-[9px] text-success/60 bg-success/10 border border-success/20 rounded px-1.5 py-0.5 font-mono hidden sm:inline">⇧C</kbd>
+        </button>
+      </div>
 
       {/* AI Assistant Badge — hidden on mobile */}
       {!isMobile && (

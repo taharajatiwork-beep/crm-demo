@@ -8,6 +8,8 @@ import Contacts from './components/Contacts';
 import DealDetail from './components/DealDetail';
 import CommandPalette from './components/CommandPalette';
 import QuickAdd from './components/QuickAdd';
+import CaseWorkflows from './components/CaseWorkflows';
+import CaptureFlow from './components/CaptureFlow';
 import { ToastContainer } from './components/Toast';
 import PageLoader from './ui/PageLoader';
 import { deals as initialDeals, contacts as initialContacts } from './data';
@@ -20,6 +22,7 @@ function App() {
   const [pageLoading, setPageLoading] = useState(false);
   const [cmdPaletteOpen, setCmdPaletteOpen] = useState(false);
   const [quickAddOpen, setQuickAddOpen] = useState(false);
+  const [captureFlowOpen, setCaptureFlowOpen] = useState(false);
 
   // Listen for ⌘K toggle from CommandPalette's global listener
   useEffect(() => {
@@ -28,12 +31,31 @@ function App() {
     return () => window.removeEventListener('command-palette-toggle', toggle);
   }, []);
 
+  // Listen for CaptureFlow open event from Sidebar
+  useEffect(() => {
+    const open = () => setCaptureFlowOpen(true);
+    window.addEventListener('capture-flow-open', open);
+    return () => window.removeEventListener('capture-flow-open', open);
+  }, []);
+
   // Cmd/Ctrl+Shift+K → open QuickAdd
   useEffect(() => {
     const handler = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         setQuickAddOpen((prev) => !prev);
+      }
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, []);
+
+  // Cmd/Ctrl+Shift+C → open CaptureFlow
+  useEffect(() => {
+    const handler = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'c') {
+        e.preventDefault();
+        setCaptureFlowOpen(true);
       }
     };
     document.addEventListener('keydown', handler);
@@ -112,6 +134,11 @@ function App() {
         onContactSubmit={(data) => {
           if (showToast) showToast(`مخاطب «${data.name}» اضافه شد ✓`, 'success');
         }}
+        showToast={showToast}
+      />
+      <CaptureFlow
+        isOpen={captureFlowOpen}
+        onClose={() => setCaptureFlowOpen(false)}
         showToast={showToast}
       />
     </div>
