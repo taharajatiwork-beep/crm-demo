@@ -141,7 +141,7 @@ export default function Contacts({ setActivePage, setSelectedDeal, showToast }) 
       key: '_stage',
       label: 'مرحله',
       render: (row) => {
-        const deal = deals.find((d) => d.contact === row.name);
+        const deal = deals.find((d) => d.contact === (row.name || ''));
         if (!deal) return <span className="text-dark-400 text-xs">—</span>;
         const stage = stages.find((s) => s.id === deal.stage);
         if (!stage) return null;
@@ -161,7 +161,7 @@ export default function Contacts({ setActivePage, setSelectedDeal, showToast }) 
       align: 'center',
       className: 'w-24',
       render: (row) => {
-        const deal = deals.find((d) => d.contact === row.name);
+        const deal = deals.find((d) => d.contact === (row.name || ''));
         return (
           <div className="flex items-center justify-center gap-1">
             <button
