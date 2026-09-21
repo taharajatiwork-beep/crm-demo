@@ -1,7 +1,10 @@
+import { useState } from 'react';
 import { AlertTriangle, Clock, Users, TrendingUp, ArrowUpRight, ArrowDownRight, Target, Phone, Mail, Calendar, CheckCircle, Zap, Eye } from 'lucide-react';
 import { deals, aiInsights, stages, formatCurrency, getHealthColor } from '../data';
+import DealForm from './DealForm';
 
 export default function Dashboard({ setActivePage, setSelectedDeal, showToast }) {
+  const [dealFormOpen, setDealFormOpen] = useState(false);
   const stalledDeals = deals.filter(d => d.daysInStage > 10);
   const highProbability = deals.filter(d => d.probability >= 60 && d.stage !== 'won');
   const totalPipeline = deals.filter(d => d.stage !== 'won').reduce((sum, d) => sum + d.value, 0);
@@ -16,7 +19,10 @@ export default function Dashboard({ setActivePage, setSelectedDeal, showToast })
           <p className="text-dark-200 text-sm mt-1">۲۰ شهریور ۱۴۰۵ — امروز ۱۲ معامله فعال دارید</p>
         </div>
         <div className="flex gap-2">
-          <button className="px-4 py-2 bg-accent hover:bg-accent-dark text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+          <button
+            onClick={() => setDealFormOpen(true)}
+            className="px-4 py-2 bg-accent hover:bg-accent-dark text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+          >
             <Zap className="w-4 h-4" />
             معامله جدید
           </button>
@@ -167,6 +173,15 @@ export default function Dashboard({ setActivePage, setSelectedDeal, showToast })
           </div>
         </div>
       </div>
+
+      <DealForm
+        isOpen={dealFormOpen}
+        onClose={() => setDealFormOpen(false)}
+        showToast={showToast}
+        onSubmit={(newDeal) => {
+          showToast('معامله جدید ایجاد شد ✓', 'success');
+        }}
+      />
     </div>
   );
 }

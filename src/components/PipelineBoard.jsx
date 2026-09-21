@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { Plus, Clock, AlertTriangle, CheckCircle, ArrowLeft, MoreHorizontal, Zap, ChevronRight } from 'lucide-react';
 import { deals as initialDeals, stages, formatCurrency, getHealthColor, smartGates, stageProbabilities } from '../data';
 import SmartGateDialog from './SmartGateDialog';
+import DealForm from './DealForm';
 
 export default function PipelineBoard({ setActivePage, setSelectedDeal, showToast }) {
   const [deals, setDeals] = useState(initialDeals);
   const [gateDialog, setGateDialog] = useState({ open: false, deal: null, fromStage: null, toStage: null });
   const [viewMode, setViewMode] = useState('kanban');
+  const [dealFormOpen, setDealFormOpen] = useState(false);
 
   const totalValue = deals.reduce((sum, d) => sum + d.value, 0);
 
@@ -57,7 +59,10 @@ export default function PipelineBoard({ setActivePage, setSelectedDeal, showToas
               نمایش لیستی
             </button>
           </div>
-          <button className="px-4 py-2 bg-accent hover:bg-accent-dark text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+          <button
+            onClick={() => setDealFormOpen(true)}
+            className="px-4 py-2 bg-accent hover:bg-accent-dark text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+          >
             <Plus className="w-4 h-4" />
             معامله جدید
           </button>
@@ -163,6 +168,27 @@ export default function PipelineBoard({ setActivePage, setSelectedDeal, showToas
         fromStage={gateDialog.fromStage}
         toStage={gateDialog.toStage}
         onAdvance={handleAdvanceConfirm}
+      />
+
+      <DealForm
+        isOpen={dealFormOpen}
+        onClose={() => setDealFormOpen(false)}
+        showToast={showToast}
+        onSubmit={(newDeal) => {
+          setDeals(prev => [...prev, {
+            ...newDeal,
+            id: Date.now(),
+            stage: 'lead',
+            health: 90,
+            probability: 10,
+            daysInStage: 0,
+            lastActivity: 'امروز',
+            lastActivityType: 'ایجاد دستی',
+            nextAction: 'بررسی صلاحیت سرنخ',
+            createdAt: '۱۴۰۵/۰۶/۲۱',
+            owner: 'علی رضایی',
+          }]);
+        }}
       />
     </div>
   );
