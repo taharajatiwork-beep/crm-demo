@@ -128,7 +128,7 @@ export default function Contacts({ setActivePage, setSelectedDeal, showToast }) 
       label: 'آخرین تماس',
       sortable: true,
       render: (value, row) => {
-        const lastContact = row?.lastContact || value || '';
+        const lastContact = String(row?.lastContact || value || '');
         const isRecent = lastContact.includes('امروز') || lastContact.includes('دیروز');
         return (
           <span className={`text-xs ${isRecent ? 'text-success' : 'text-dark-200'}`}>

@@ -447,14 +447,14 @@ export default function Dashboard({ setActivePage, setSelectedDeal, showToast })
   );
 }
 
-function AlertCard({ icon, count, label, sublabel, bgColor, borderColor }) {
+function AlertCard({ icon, count = 0, label, sublabel, bgColor, borderColor }) {
   return (
     <div className={`${bgColor} border ${borderColor} rounded-xl p-3 sm:p-4 flex items-center gap-2 sm:gap-3 transition-transform hover:scale-[1.02]`}>
       <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}>
         {icon}
       </div>
       <div className="min-w-0">
-        <p className="text-white font-bold text-lg sm:text-xl">{count}</p>
+        <p className="text-white font-bold text-lg sm:text-xl">{count ?? 0}</p>
         <p className="text-dark-200 text-[10px] sm:text-xs leading-tight">{label}</p>
         <p className="text-dark-300 text-[10px] sm:text-xs leading-tight hidden sm:block">{sublabel}</p>
       </div>
