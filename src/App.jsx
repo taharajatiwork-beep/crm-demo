@@ -5,12 +5,25 @@ import PipelineBoard from './components/PipelineBoard';
 import Contacts from './components/Contacts';
 import DealDetail from './components/DealDetail';
 import { ToastContainer } from './components/Toast';
+import PageLoader from './ui/PageLoader';
 import './index.css';
 
 function App() {
   const [activePage, setActivePage] = useState('dashboard');
   const [selectedDeal, setSelectedDeal] = useState(1);
   const [toasts, setToasts] = useState([]);
+  const [pageLoading, setPageLoading] = useState(false);
+
+  // Simulate a brief loading state on every page switch
+  const navigateTo = useCallback((page) => {
+    if (page === activePage) return;
+    setPageLoading(true);
+    // Brief simulated load (300 ms) then reveal new page
+    setTimeout(() => {
+      setActivePage(page);
+      setPageLoading(false);
+    }, 300);
+  }, [activePage]);
 
   const showToast = useCallback((message, type = 'info') => {
     const id = Date.now();
@@ -26,23 +39,23 @@ function App() {
   const renderPage = () => {
     switch (activePage) {
       case 'dashboard':
-        return <Dashboard setActivePage={setActivePage} setSelectedDeal={setSelectedDeal} showToast={showToast} />;
+        return <Dashboard setActivePage={navigateTo} setSelectedDeal={setSelectedDeal} showToast={showToast} />;
       case 'pipeline':
-        return <PipelineBoard setActivePage={setActivePage} setSelectedDeal={setSelectedDeal} showToast={showToast} />;
+        return <PipelineBoard setActivePage={navigateTo} setSelectedDeal={setSelectedDeal} showToast={showToast} />;
       case 'contacts':
-        return <Contacts setActivePage={setActivePage} setSelectedDeal={setSelectedDeal} showToast={showToast} />;
+        return <Contacts setActivePage={navigateTo} setSelectedDeal={setSelectedDeal} showToast={showToast} />;
       case 'deal':
-        return <DealDetail dealId={selectedDeal} setActivePage={setActivePage} showToast={showToast} />;
+        return <DealDetail dealId={selectedDeal} setActivePage={navigateTo} showToast={showToast} />;
       default:
-        return <Dashboard setActivePage={setActivePage} setSelectedDeal={setSelectedDeal} showToast={showToast} />;
+        return <Dashboard setActivePage={navigateTo} setSelectedDeal={setSelectedDeal} showToast={showToast} />;
     }
   };
 
   return (
     <div className="min-h-screen bg-dark-900">
-      <Sidebar activePage={activePage} setActivePage={setActivePage} />
+      <Sidebar activePage={activePage} setActivePage={navigateTo} />
       <main className="mr-64 p-6 min-h-screen max-md:mr-0 max-md:p-4 max-md:pt-16">
-        {renderPage()}
+        {pageLoading ? <PageLoader /> : renderPage()}
       </main>
       <ToastContainer toasts={toasts} />
     </div>
