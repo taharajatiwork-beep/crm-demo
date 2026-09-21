@@ -86,11 +86,33 @@ function App() {
         {pageLoading ? <PageLoader /> : renderPage()}
       </main>
       <ToastContainer toasts={toasts} />
+
+      {/* Floating Quick-Add button */}
+      <button
+        onClick={() => setQuickAddOpen(true)}
+        className="fixed bottom-6 left-6 z-40 w-14 h-14 bg-accent hover:bg-accent-dark text-white rounded-full shadow-xl shadow-accent/30 flex items-center justify-center transition-all duration-200 hover:scale-105 cursor-pointer"
+        aria-label="ایجاد سریع"
+      >
+        <Plus className="w-6 h-6" />
+      </button>
+
       <CommandPalette
         isOpen={cmdPaletteOpen}
         onClose={() => setCmdPaletteOpen(false)}
         onNavigate={navigateTo}
         onSelectDeal={setSelectedDeal}
+      />
+      <QuickAdd
+        isOpen={quickAddOpen}
+        onClose={() => setQuickAddOpen(false)}
+        onDealSubmit={(data) => {
+          // In a real app this would call an API; for the demo we just show a toast
+          if (showToast) showToast(`معامله «${data.title}» ایجاد شد ✓`, 'success');
+        }}
+        onContactSubmit={(data) => {
+          if (showToast) showToast(`مخاطب «${data.name}» اضافه شد ✓`, 'success');
+        }}
+        showToast={showToast}
       />
     </div>
   );
