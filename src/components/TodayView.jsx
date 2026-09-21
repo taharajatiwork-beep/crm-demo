@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { deals as allDeals, activities as allActivities, aiInsights, contacts, stages, formatCurrency, getHealthColor, getHealthBg } from '../data';
 import DealForm from './DealForm';
+import MLInsights from './MLInsights';
 import { Card, Badge } from '../ui';
 
 export default function TodayView({ setActivePage, setSelectedDeal, showToast }) {
@@ -311,6 +312,9 @@ export default function TodayView({ setActivePage, setSelectedDeal, showToast })
               </div>
             )}
           </Card>
+
+          {/* ML Insights */}
+          <MLInsights deals={allDeals} onSelectDeal={(id) => { setSelectedDeal(id); setActivePage('deal'); }} />
 
           {/* Recent Activity Feed */}
           <Card>
