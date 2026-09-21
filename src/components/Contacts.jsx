@@ -128,10 +128,11 @@ export default function Contacts({ setActivePage, setSelectedDeal, showToast }) 
       label: 'آخرین تماس',
       sortable: true,
       render: (row) => {
-        const isRecent = row.lastContact.includes('امروز') || row.lastContact.includes('دیروز');
+        const lastContact = row.lastContact || '';
+        const isRecent = lastContact.includes('امروز') || lastContact.includes('دیروز');
         return (
           <span className={`text-xs ${isRecent ? 'text-success' : 'text-dark-200'}`}>
-            {row.lastContact}
+            {lastContact || '—'}
           </span>
         );
       },
