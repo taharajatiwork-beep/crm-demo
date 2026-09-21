@@ -89,10 +89,10 @@ export default function Contacts({ setActivePage, setSelectedDeal, showToast }) 
       key: 'name',
       label: 'نام',
       sortable: true,
-      render: (row) => (
+      render: (value, row) => (
         <div>
-          <p className="text-white text-sm font-medium">{row.name}</p>
-          <p className="text-dark-300 text-xs">{row.role}</p>
+          <p className="text-white text-sm font-medium">{row?.name || value}</p>
+          <p className="text-dark-300 text-xs">{row?.role}</p>
         </div>
       ),
     },
@@ -100,26 +100,26 @@ export default function Contacts({ setActivePage, setSelectedDeal, showToast }) 
       key: 'company',
       label: 'شرکت',
       sortable: true,
-      render: (row) => <span className="text-dark-100 text-sm">{row.company}</span>,
+      render: (value, row) => <span className="text-dark-100 text-sm">{row?.company || value}</span>,
     },
     {
       key: 'phone',
       label: 'تلفن',
-      render: (row) => <span className="text-dark-100 text-sm font-mono" dir="ltr">{row.phone}</span>,
+      render: (value, row) => <span className="text-dark-100 text-sm font-mono" dir="ltr">{row?.phone || value}</span>,
     },
     {
       key: 'email',
       label: 'ایمیل',
-      render: (row) => <span className="text-dark-100 text-sm" dir="ltr">{row.email}</span>,
+      render: (value, row) => <span className="text-dark-100 text-sm" dir="ltr">{row?.email || value}</span>,
     },
     {
       key: 'dealCount',
       label: 'معاملات',
       sortable: true,
       align: 'center',
-      render: (row) => (
-        <Badge variant={row.dealCount > 0 ? 'accent' : 'default'}>
-          {row.dealCount} معامله
+      render: (value, row) => (
+        <Badge variant={(row?.dealCount || value) > 0 ? 'accent' : 'default'}>
+          {row?.dealCount || value || 0} معامله
         </Badge>
       ),
     },
@@ -127,8 +127,8 @@ export default function Contacts({ setActivePage, setSelectedDeal, showToast }) 
       key: 'lastContact',
       label: 'آخرین تماس',
       sortable: true,
-      render: (row) => {
-        const lastContact = row.lastContact || '';
+      render: (value, row) => {
+        const lastContact = row?.lastContact || value || '';
         const isRecent = lastContact.includes('امروز') || lastContact.includes('دیروز');
         return (
           <span className={`text-xs ${isRecent ? 'text-success' : 'text-dark-200'}`}>
@@ -140,8 +140,8 @@ export default function Contacts({ setActivePage, setSelectedDeal, showToast }) 
     {
       key: '_stage',
       label: 'مرحله',
-      render: (row) => {
-        const deal = deals.find((d) => d.contact === (row.name || ''));
+      render: (value, row) => {
+        const deal = deals.find((d) => d.contact === (row?.name || ''));
         if (!deal) return <span className="text-dark-400 text-xs">—</span>;
         const stage = stages.find((s) => s.id === deal.stage);
         if (!stage) return null;
@@ -160,8 +160,8 @@ export default function Contacts({ setActivePage, setSelectedDeal, showToast }) 
       label: 'عملیات',
       align: 'center',
       className: 'w-24',
-      render: (row) => {
-        const deal = deals.find((d) => d.contact === (row.name || ''));
+      render: (value, row) => {
+        const deal = deals.find((d) => d.contact === (row?.name || ''));
         return (
           <div className="flex items-center justify-center gap-1">
             <button
