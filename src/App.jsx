@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Plus } from 'lucide-react';
 import Sidebar from './components/Sidebar';
 import TodayView from './components/TodayView';
 import Dashboard from './components/Dashboard';
@@ -6,8 +7,10 @@ import PipelineBoard from './components/PipelineBoard';
 import Contacts from './components/Contacts';
 import DealDetail from './components/DealDetail';
 import CommandPalette from './components/CommandPalette';
+import QuickAdd from './components/QuickAdd';
 import { ToastContainer } from './components/Toast';
 import PageLoader from './ui/PageLoader';
+import { deals as initialDeals, contacts as initialContacts } from './data';
 import './index.css';
 
 function App() {
@@ -16,12 +19,25 @@ function App() {
   const [toasts, setToasts] = useState([]);
   const [pageLoading, setPageLoading] = useState(false);
   const [cmdPaletteOpen, setCmdPaletteOpen] = useState(false);
+  const [quickAddOpen, setQuickAddOpen] = useState(false);
 
   // Listen for ⌘K toggle from CommandPalette's global listener
   useEffect(() => {
     const toggle = () => setCmdPaletteOpen((prev) => !prev);
     window.addEventListener('command-palette-toggle', toggle);
     return () => window.removeEventListener('command-palette-toggle', toggle);
+  }, []);
+
+  // Cmd/Ctrl+Shift+K → open QuickAdd
+  useEffect(() => {
+    const handler = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setQuickAddOpen((prev) => !prev);
+      }
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
   }, []);
 
   // Simulate a brief loading state on every page switch
