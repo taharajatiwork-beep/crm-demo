@@ -1,24 +1,26 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { Plus } from 'lucide-react';
 import LoginScreen from './components/LoginScreen';
 import Sidebar from './components/Sidebar';
-import TodayView from './components/TodayView';
-import Dashboard from './components/Dashboard';
-import PipelineBoard from './components/PipelineBoard';
-import Contacts from './components/Contacts';
-import DealDetail from './components/DealDetail';
 import CommandPalette from './components/CommandPalette';
 import QuickAdd from './components/QuickAdd';
-import CaseWorkflows from './components/CaseWorkflows';
-import CaptureFlow from './components/CaptureFlow';
-import Reports from './components/Reports';
-import CallLog from './components/CallLog';
-import SMSPanel from './components/SMSPanel';
-import SmartRules from './components/SmartRules';
 import { ToastContainer } from './components/Toast';
 import PageLoader from './ui/PageLoader';
 import { deals as initialDeals, contacts as initialContacts } from './data';
 import './index.css';
+
+// ─── Lazy-loaded pages (code splitting) ───
+const TodayView = lazy(() => import('./components/TodayView'));
+const Dashboard = lazy(() => import('./components/Dashboard'));
+const PipelineBoard = lazy(() => import('./components/PipelineBoard'));
+const Contacts = lazy(() => import('./components/Contacts'));
+const DealDetail = lazy(() => import('./components/DealDetail'));
+const CaseWorkflows = lazy(() => import('./components/CaseWorkflows'));
+const Reports = lazy(() => import('./components/Reports'));
+const CallLog = lazy(() => import('./components/CallLog'));
+const SMSPanel = lazy(() => import('./components/SMSPanel'));
+const SmartRules = lazy(() => import('./components/SmartRules'));
+const CaptureFlow = lazy(() => import('./components/CaptureFlow'));
 
 function App() {
   // ─── وضعیت احراز هویت ───
@@ -85,7 +87,6 @@ function App() {
   const navigateTo = useCallback((page) => {
     if (page === activePage) return;
     setPageLoading(true);
-    // Brief simulated load (300 ms) then reveal new page
     setTimeout(() => {
       setActivePage(page);
       setPageLoading(false);
@@ -149,7 +150,13 @@ function App() {
         onLogout={handleLogout}
       />
       <main className="mr-64 p-6 min-h-screen max-md:mr-0 max-md:p-4 max-md:pt-16">
-        {pageLoading ? <PageLoader /> : renderPage()}
+        {pageLoading ? (
+          <PageLoader />
+        ) : (
+          <Suspense fallback={<PageLoader />}>
+            {renderPage()}
+          </Suspense>
+        )}
       </main>
       <ToastContainer toasts={toasts} />
 
@@ -172,7 +179,6 @@ function App() {
         isOpen={quickAddOpen}
         onClose={() => setQuickAddOpen(false)}
         onDealSubmit={(data) => {
-          // In a real app this would call an API; for the demo we just show a toast
           if (showToast) showToast(`معامله «${data.title}» ایجاد شد ✓`, 'success');
         }}
         onContactSubmit={(data) => {
