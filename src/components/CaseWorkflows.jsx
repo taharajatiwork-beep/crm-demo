@@ -639,7 +639,7 @@ function ContractCard({ item, onAdvance, onAction, isExpanded, onToggleExpand, s
       )}
       {item.stage === 'renewal' && (
         <button
-          onClick={() => showToast_local('درخواست تمدید ارسال شد ✓')}
+          onClick={() => showToast('درخواست تمدید ارسال شد ✓', 'success')}
           className="w-full py-2 bg-warning/10 hover:bg-warning/20 text-warning text-xs rounded-lg transition-colors flex items-center justify-center gap-1 font-medium"
         >
           <RefreshCw className="w-3 h-3" />
@@ -756,6 +756,4 @@ function SmartGateModal({ item, gateData, toStage, stages, onClose, onConfirm })
   );
 }
 
-function showToast_local(msg) {
-  // placeholder — actual toast is via props in parent
-}
+
