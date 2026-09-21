@@ -1,10 +1,46 @@
-import { useState } from 'react';
-import { AlertTriangle, Clock, Users, TrendingUp, ArrowUpRight, ArrowDownRight, Target, Phone, Mail, Calendar, CheckCircle, Zap, Eye } from 'lucide-react';
-import { deals, aiInsights, stages, formatCurrency, getHealthColor } from '../data';
+import { useState, useMemo } from 'react';
+import { AlertTriangle, Clock, Users, TrendingUp, ArrowUpRight, ArrowDownRight, Target, Phone, Mail, Calendar, CheckCircle, Zap, Eye, Search, SlidersHorizontal, X } from 'lucide-react';
+import { deals as allDeals, aiInsights, stages, formatCurrency, getHealthColor } from '../data';
 import DealForm from './DealForm';
 
 export default function Dashboard({ setActivePage, setSelectedDeal, showToast }) {
   const [dealFormOpen, setDealFormOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [ownerFilter, setOwnerFilter] = useState('all');
+  const [healthFilter, setHealthFilter] = useState('all');
+  const [showFilters, setShowFilters] = useState(false);
+
+  // Get unique owners
+  const uniqueOwners = useMemo(() => {
+    return [...new Set(allDeals.map(d => d.owner))];
+  }, []);
+
+  // Filtered deals
+  const deals = useMemo(() => {
+    return allDeals.filter(deal => {
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        const matchTitle = deal.title.toLowerCase().includes(q);
+        const matchCompany = deal.company.toLowerCase().includes(q);
+        const matchContact = deal.contact.toLowerCase().includes(q);
+        if (!matchTitle && !matchCompany && !matchContact) return false;
+      }
+      if (ownerFilter !== 'all' && deal.owner !== ownerFilter) return false;
+      if (healthFilter === 'high' && deal.health < 70) return false;
+      if (healthFilter === 'medium' && (deal.health < 40 || deal.health >= 70)) return false;
+      if (healthFilter === 'low' && deal.health >= 40) return false;
+      return true;
+    });
+  }, [searchQuery, ownerFilter, healthFilter]);
+
+  const hasActiveFilters = searchQuery || ownerFilter !== 'all' || healthFilter !== 'all';
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setOwnerFilter('all');
+    setHealthFilter('all');
+  };
+
   const stalledDeals = deals.filter(d => d.daysInStage > 10);
   const highProbability = deals.filter(d => d.probability >= 60 && d.stage !== 'won');
   const totalPipeline = deals.filter(d => d.stage !== 'won').reduce((sum, d) => sum + d.value, 0);
@@ -16,7 +52,7 @@ export default function Dashboard({ setActivePage, setSelectedDeal, showToast })
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white">صبح بخیر، علی 👋</h1>
-          <p className="text-dark-200 text-sm mt-1">۲۰ شهریور ۱۴۰۵ — امروز ۱۲ معامله فعال دارید</p>
+          <p className="text-dark-200 text-sm mt-1">۲۰ شهریور ۱۴۰۵ — امروز {deals.filter(d => d.stage !== 'won').length} معامله فعال دارید</p>
         </div>
         <div className="flex gap-2">
           <button
@@ -27,6 +63,105 @@ export default function Dashboard({ setActivePage, setSelectedDeal, showToast })
             معامله جدید
           </button>
         </div>
+      </div>
+
+      {/* Search & Filter Bar */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" />
+            <input
+              type="text"
+              placeholder="جستجو در داشبورد..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-dark-800 border border-dark-600 rounded-lg py-2 pr-10 pl-4 text-sm text-white placeholder:text-dark-400 focus:outline-none focus:border-accent transition-colors"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-400 hover:text-white transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+              showFilters || hasActiveFilters
+                ? 'bg-accent/20 text-accent-light border border-accent/30'
+                : 'bg-dark-800 border border-dark-600 text-dark-200 hover:text-white hover:border-dark-500'
+            }`}
+          >
+            <SlidersHorizontal className="w-4 h-4" />
+            فیلترها
+            {hasActiveFilters && <span className="w-2 h-2 rounded-full bg-accent"></span>}
+          </button>
+          {hasActiveFilters && (
+            <button
+              onClick={clearFilters}
+              className="px-3 py-2 bg-danger/10 hover:bg-danger/20 text-danger text-sm rounded-lg transition-colors flex items-center gap-1"
+            >
+              <X className="w-3 h-3" />
+              پاک کردن
+            </button>
+          )}
+        </div>
+
+        {showFilters && (
+          <div className="flex flex-wrap gap-3 p-3 bg-dark-800 border border-dark-600 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-dark-300 text-xs font-medium">مالک</label>
+              <select
+                value={ownerFilter}
+                onChange={(e) => setOwnerFilter(e.target.value)}
+                className="bg-dark-700 border border-dark-600 rounded-lg py-1.5 px-3 text-sm text-white focus:outline-none focus:border-accent transition-colors appearance-none cursor-pointer"
+              >
+                <option value="all">همه مالکان</option>
+                {uniqueOwners.map(owner => (
+                  <option key={owner} value={owner}>{owner}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-dark-300 text-xs font-medium">وضعیت سلامت</label>
+              <select
+                value={healthFilter}
+                onChange={(e) => setHealthFilter(e.target.value)}
+                className="bg-dark-700 border border-dark-600 rounded-lg py-1.5 px-3 text-sm text-white focus:outline-none focus:border-accent transition-colors appearance-none cursor-pointer"
+              >
+                <option value="all">همه</option>
+                <option value="high">خوب (۷۰+)</option>
+                <option value="medium">متوسط (۴۰-۶۹)</option>
+                <option value="low">ضعیف (زیر ۴۰)</option>
+              </select>
+            </div>
+          </div>
+        )}
+
+        {hasActiveFilters && !showFilters && (
+          <div className="flex flex-wrap gap-2">
+            {searchQuery && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-accent/10 text-accent-light text-xs rounded-full border border-accent/20">
+                جستجو: {searchQuery}
+                <button onClick={() => setSearchQuery('')} className="hover:text-white"><X className="w-3 h-3" /></button>
+              </span>
+            )}
+            {ownerFilter !== 'all' && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-accent/10 text-accent-light text-xs rounded-full border border-accent/20">
+                مالک: {ownerFilter}
+                <button onClick={() => setOwnerFilter('all')} className="hover:text-white"><X className="w-3 h-3" /></button>
+              </span>
+            )}
+            {healthFilter !== 'all' && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-accent/10 text-accent-light text-xs rounded-full border border-accent/20">
+                سلامت: {healthFilter === 'high' ? 'خوب' : healthFilter === 'medium' ? 'متوسط' : 'ضعیف'}
+                <button onClick={() => setHealthFilter('all')} className="hover:text-white"><X className="w-3 h-3" /></button>
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Alert Cards */}
@@ -151,8 +286,16 @@ export default function Dashboard({ setActivePage, setSelectedDeal, showToast })
 
           {/* High Probability Deals */}
           <div className="bg-dark-800 border border-dark-600 rounded-xl p-5">
-            <h2 className="text-white font-semibold mb-4">معاملات با احتمال بالا</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-white font-semibold">معاملات با احتمال بالا</h2>
+              {hasActiveFilters && (
+                <span className="text-xs text-dark-400">{highProbability.length} نتیجه</span>
+              )}
+            </div>
             <div className="space-y-2">
+              {highProbability.length === 0 && (
+                <p className="text-dark-400 text-sm text-center py-4">معامله‌ای یافت نشد</p>
+              )}
               {highProbability.slice(0, 3).map((deal) => (
                 <button
                   key={deal.id}

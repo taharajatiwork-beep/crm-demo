@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { Phone, Mail, Plus, ExternalLink, Users } from 'lucide-react';
 import { contacts as defaultContacts, deals, stages } from '../data';
 import ContactForm from './ContactForm';
-import { DataTable, SearchInput, FilterBar, Badge } from './ui';
+import { DataTable, SearchInput, FilterBar, Badge } from '../ui';
 
 export default function Contacts({ setActivePage, setSelectedDeal, showToast }) {
   const [searchTerm, setSearchTerm] = useState('');
