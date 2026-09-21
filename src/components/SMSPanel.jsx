@@ -5,7 +5,7 @@ import {
   Inbox, MessageCircle, Ban, Eye,
 } from 'lucide-react';
 import { contacts, smsTemplates, smsHistory as initialHistory } from '../data';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
+import Card, { CardHeader, CardTitle, CardContent } from '../ui/Card';
 import Button from '../ui/Button';
 import Badge from '../ui/Badge';
 
@@ -434,7 +434,7 @@ export default function SMSPanel({ showToast }) {
                     </div>
                     <Badge variant="neutral">{categoryLabels[tpl.category] || tpl.category}</Badge>
                   </div>
-                  <p className="text-dark-200 text-xs leading-relaxed mb-3 dir="rtl">{tpl.body}</p>
+                  <p className="text-dark-200 text-xs leading-relaxed mb-3" style={{ direction: 'rtl' }}>{tpl.body}</p>
                   <div className="flex items-center justify-between">
                     <div className="flex gap-1">
                       {tpl.variables.map((v) => (
@@ -530,7 +530,7 @@ export default function SMSPanel({ showToast }) {
                             {s.label}
                           </Badge>
                         </div>
-                        <p className="text-dark-200 text-xs leading-relaxed mb-2 dir="rtl">{sms.message}</p>
+                        <p className="text-dark-200 text-xs leading-relaxed mb-2" style={{ direction: 'rtl' }}>{sms.message}</p>
                         <div className="flex items-center gap-4 text-[11px] text-dark-400">
                           <span className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />

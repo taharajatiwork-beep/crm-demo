@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { Search, ArrowUp, ArrowDown, CornerDownLeft, X, Kanban, Users, LayoutDashboard, FileText } from 'lucide-react';
+import { Search, ArrowUp, ArrowDown, CornerDownLeft, X, Kanban, Users, LayoutDashboard, FileText, MessageSquare } from 'lucide-react';
 import { deals, contacts, stages } from '../data';
 
 const NAV_ITEMS = [
   { id: 'dashboard', label: 'داشبورد', icon: LayoutDashboard, type: 'page' },
   { id: 'pipeline', label: 'تخته معاملات', icon: Kanban, type: 'page' },
   { id: 'contacts', label: 'مشتریان', icon: Users, type: 'page' },
+  { id: 'sms', label: 'پیامک', icon: MessageSquare, type: 'page' },
   { id: 'reports', label: 'گزارش‌ها', icon: FileText, type: 'page' },
 ];
 
