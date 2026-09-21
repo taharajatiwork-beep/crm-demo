@@ -12,6 +12,7 @@ import CaseWorkflows from './components/CaseWorkflows';
 import CaptureFlow from './components/CaptureFlow';
 import Reports from './components/Reports';
 import CallLog from './components/CallLog';
+import SMSPanel from './components/SMSPanel';
 import { ToastContainer } from './components/Toast';
 import PageLoader from './ui/PageLoader';
 import { deals as initialDeals, contacts as initialContacts } from './data';
@@ -102,6 +103,8 @@ function App() {
         return <Reports setActivePage={navigateTo} setSelectedDeal={setSelectedDeal} showToast={showToast} />;
       case 'callLog':
         return <CallLog setActivePage={navigateTo} setSelectedDeal={setSelectedDeal} showToast={showToast} />;
+      case 'sms':
+        return <SMSPanel showToast={showToast} />;
       case 'deal':
         return <DealDetail dealId={selectedDeal} setActivePage={navigateTo} showToast={showToast} />;
       default:
