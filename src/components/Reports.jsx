@@ -190,7 +190,7 @@ export default function Reports({ setActivePage, setSelectedDeal, showToast }) {
     const companies = [...new Set(all.map(d => d.company))];
 
     return {
-      total, wonCount: won.length, activeCount: active.length,
+      total: all.length, wonCount: won.length, activeCount: active.length,
       totalValue, wonValue, activeValue,
       avgHealth, conversionRate,
       stageDist, ownerStats, healthy, medium, atRisk,
