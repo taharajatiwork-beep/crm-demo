@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { LayoutDashboard, Kanban, Users, FileText, Settings, Bell, Search, ChevronDown, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Kanban, Users, FileText, Settings, Bell, Search, ChevronDown, LogOut, Menu, X, Sun } from 'lucide-react';
 
 const menuItems = [
+  { id: 'today', icon: Sun, label: 'امروز' },
   { id: 'dashboard', icon: LayoutDashboard, label: 'داشبورد' },
   { id: 'pipeline', icon: Kanban, label: 'تخته معاملات' },
   { id: 'contacts', icon: Users, label: 'مشتریان' },

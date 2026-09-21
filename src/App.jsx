@@ -48,6 +48,8 @@ function App() {
 
   const renderPage = () => {
     switch (activePage) {
+      case 'today':
+        return <TodayView setActivePage={navigateTo} setSelectedDeal={setSelectedDeal} showToast={showToast} />;
       case 'dashboard':
         return <Dashboard setActivePage={navigateTo} setSelectedDeal={setSelectedDeal} showToast={showToast} />;
       case 'pipeline':
@@ -57,7 +59,7 @@ function App() {
       case 'deal':
         return <DealDetail dealId={selectedDeal} setActivePage={navigateTo} showToast={showToast} />;
       default:
-        return <Dashboard setActivePage={navigateTo} setSelectedDeal={setSelectedDeal} showToast={showToast} />;
+        return <TodayView setActivePage={navigateTo} setSelectedDeal={setSelectedDeal} showToast={showToast} />;
     }
   };
 
