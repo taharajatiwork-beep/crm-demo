@@ -10,6 +10,7 @@ import CommandPalette from './components/CommandPalette';
 import QuickAdd from './components/QuickAdd';
 import CaseWorkflows from './components/CaseWorkflows';
 import CaptureFlow from './components/CaptureFlow';
+import Reports from './components/Reports';
 import { ToastContainer } from './components/Toast';
 import PageLoader from './ui/PageLoader';
 import { deals as initialDeals, contacts as initialContacts } from './data';
@@ -96,6 +97,8 @@ function App() {
         return <Contacts setActivePage={navigateTo} setSelectedDeal={setSelectedDeal} showToast={showToast} />;
       case 'workflows':
         return <CaseWorkflows setActivePage={navigateTo} setSelectedDeal={setSelectedDeal} showToast={showToast} />;
+      case 'reports':
+        return <Reports setActivePage={navigateTo} setSelectedDeal={setSelectedDeal} showToast={showToast} />;
       case 'deal':
         return <DealDetail dealId={selectedDeal} setActivePage={navigateTo} showToast={showToast} />;
       default:
