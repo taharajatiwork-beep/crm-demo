@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Plus } from 'lucide-react';
+import LoginScreen from './components/LoginScreen';
 import Sidebar from './components/Sidebar';
 import TodayView from './components/TodayView';
 import Dashboard from './components/Dashboard';
@@ -19,6 +20,8 @@ import { deals as initialDeals, contacts as initialContacts } from './data';
 import './index.css';
 
 function App() {
+  // ─── وضعیت احراز هویت ───
+  const [currentUser, setCurrentUser] = useState(null);
   const [activePage, setActivePage] = useState('today');
   const [selectedDeal, setSelectedDeal] = useState(1);
   const [toasts, setToasts] = useState([]);
@@ -26,6 +29,18 @@ function App() {
   const [cmdPaletteOpen, setCmdPaletteOpen] = useState(false);
   const [quickAddOpen, setQuickAddOpen] = useState(false);
   const [captureFlowOpen, setCaptureFlowOpen] = useState(false);
+
+  // ─── احراز هویت ───
+  const handleLogin = useCallback((user) => {
+    setCurrentUser(user);
+  }, []);
+
+  const handleLogout = useCallback(() => {
+    setCurrentUser(null);
+    localStorage.removeItem('crm-remembered-user');
+    setActivePage('today');
+    setSelectedDeal(1);
+  }, []);
 
   // Listen for ⌘K toggle from CommandPalette's global listener
   useEffect(() => {
@@ -87,6 +102,16 @@ function App() {
     }, 3000);
   }, []);
 
+  // ─── صفحه ورود ───
+  if (!currentUser) {
+    return (
+      <>
+        <LoginScreen onLogin={handleLogin} />
+        <ToastContainer toasts={toasts} />
+      </>
+    );
+  }
+
   const renderPage = () => {
     switch (activePage) {
       case 'today':
@@ -114,7 +139,12 @@ function App() {
 
   return (
     <div className="min-h-screen bg-dark-900">
-      <Sidebar activePage={activePage} setActivePage={navigateTo} />
+      <Sidebar
+        activePage={activePage}
+        setActivePage={navigateTo}
+        currentUser={currentUser}
+        onLogout={handleLogout}
+      />
       <main className="mr-64 p-6 min-h-screen max-md:mr-0 max-md:p-4 max-md:pt-16">
         {pageLoading ? <PageLoader /> : renderPage()}
       </main>

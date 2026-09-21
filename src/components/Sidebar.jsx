@@ -12,7 +12,18 @@ const menuItems = [
   { id: 'reports', icon: FileText, label: 'گزارش‌ها' },
 ];
 
-function SidebarContent({ activePage, setActivePage, isMobile, onClose }) {
+const ROLE_BADGE_COLORS = {
+  admin: 'text-danger',
+  manager: 'text-warning',
+  salesperson: 'text-success',
+};
+
+function SidebarContent({ activePage, setActivePage, isMobile, onClose, currentUser, onLogout }) {
+  const userName = currentUser?.name || 'علی رضایی';
+  const userRole = currentUser?.roleLabel || 'فروشنده';
+  const userAvatar = currentUser?.avatar || 'ع';
+  const roleColor = ROLE_BADGE_COLORS[currentUser?.role] || 'text-accent-light';
+
   return (
     <div className="flex flex-col h-full">
       {/* Logo */}
@@ -104,13 +115,17 @@ function SidebarContent({ activePage, setActivePage, isMobile, onClose }) {
       <div className="p-4 border-t border-dark-600">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 bg-accent/20 rounded-full flex items-center justify-center">
-            <span className="text-accent-light text-sm font-medium">ع</span>
+            <span className="text-accent-light text-sm font-medium">{userAvatar}</span>
           </div>
           <div className="flex-1">
-            <p className="text-white text-sm font-medium">علی رضایی</p>
-            <p className="text-dark-300 text-xs">فروشنده</p>
+            <p className="text-white text-sm font-medium">{userName}</p>
+            <p className={`text-xs ${roleColor}`}>{userRole}</p>
           </div>
-          <button className="text-dark-300 hover:text-dark-100 transition-colors">
+          <button
+            onClick={onLogout}
+            className="text-dark-300 hover:text-danger transition-colors cursor-pointer"
+            title="خروج از حساب"
+          >
             <LogOut className="w-4 h-4" />
           </button>
         </div>
@@ -140,7 +155,7 @@ export function TopBar({ activePage, onMenuToggle }) {
   );
 }
 
-export default function Sidebar({ activePage, setActivePage }) {
+export default function Sidebar({ activePage, setActivePage, currentUser, onLogout }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const closeMobile = () => setMobileOpen(false);
@@ -153,6 +168,8 @@ export default function Sidebar({ activePage, setActivePage }) {
           activePage={activePage}
           setActivePage={setActivePage}
           isMobile={false}
+          currentUser={currentUser}
+          onLogout={onLogout}
         />
       </aside>
 
@@ -171,6 +188,8 @@ export default function Sidebar({ activePage, setActivePage }) {
               setActivePage={setActivePage}
               isMobile={true}
               onClose={closeMobile}
+              currentUser={currentUser}
+              onLogout={onLogout}
             />
           </div>
         </div>
