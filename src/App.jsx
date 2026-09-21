@@ -94,6 +94,8 @@ function App() {
         return <PipelineBoard setActivePage={navigateTo} setSelectedDeal={setSelectedDeal} showToast={showToast} />;
       case 'contacts':
         return <Contacts setActivePage={navigateTo} setSelectedDeal={setSelectedDeal} showToast={showToast} />;
+      case 'workflows':
+        return <CaseWorkflows setActivePage={navigateTo} setSelectedDeal={setSelectedDeal} showToast={showToast} />;
       case 'deal':
         return <DealDetail dealId={selectedDeal} setActivePage={navigateTo} showToast={showToast} />;
       default:

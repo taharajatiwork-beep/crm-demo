@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { LayoutDashboard, Kanban, Users, FileText, Settings, Bell, Search, ChevronDown, LogOut, Menu, X, Sun, Phone } from 'lucide-react';
+import { LayoutDashboard, Kanban, Users, FileText, Settings, Bell, Search, ChevronDown, LogOut, Menu, X, Sun, GitBranch } from 'lucide-react';
 
 const menuItems = [
   { id: 'today', icon: Sun, label: 'امروز' },
   { id: 'dashboard', icon: LayoutDashboard, label: 'داشبورد' },
   { id: 'pipeline', icon: Kanban, label: 'تخته معاملات' },
+  { id: 'workflows', icon: GitBranch, label: 'گردش کار پرونده‌ها' },
   { id: 'contacts', icon: Users, label: 'مشتریان' },
   { id: 'reports', icon: FileText, label: 'گزارش‌ها' },
 ];

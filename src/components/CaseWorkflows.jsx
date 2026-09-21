@@ -357,6 +357,7 @@ export default function CaseWorkflows({ setActivePage, setSelectedDeal, showToas
                         onAction={handleQuickAction}
                         isExpanded={expandedCard === item.id}
                         onToggleExpand={() => setExpandedCard(expandedCard === item.id ? null : item.id)}
+                        showToast={showToast}
                       />
                     )
                   ))}
@@ -500,7 +501,7 @@ function FollowUpCard({ item, onAdvance, onAction, isExpanded, onToggleExpand })
 
 
 // ─── Contract Card ───────────────────────────────────────────────────────
-function ContractCard({ item, onAdvance, onAction, isExpanded, onToggleExpand }) {
+function ContractCard({ item, onAdvance, onAction, isExpanded, onToggleExpand, showToast }) {
   const status = contractStatusConfig[item.status] || contractStatusConfig.draft;
   const isExpiringSoon = item.daysRemaining !== null && item.daysRemaining <= 30 && item.daysRemaining > 0;
   const isExpired = item.daysRemaining !== null && item.daysRemaining < 0;
