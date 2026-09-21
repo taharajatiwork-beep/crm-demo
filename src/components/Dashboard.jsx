@@ -1,16 +1,16 @@
 import { AlertTriangle, Clock, Users, TrendingUp, ArrowUpRight, ArrowDownRight, Target, Phone, Mail, Calendar, CheckCircle, Zap, Eye } from 'lucide-react';
 import { deals, aiInsights, stages, formatCurrency, getHealthColor } from '../data';
 
-export default function Dashboard({ setActivePage, setSelectedDeal }) {
+export default function Dashboard({ setActivePage, setSelectedDeal, showToast }) {
   const stalledDeals = deals.filter(d => d.daysInStage > 10);
   const highProbability = deals.filter(d => d.probability >= 60 && d.stage !== 'won');
   const totalPipeline = deals.filter(d => d.stage !== 'won').reduce((sum, d) => sum + d.value, 0);
   const wonValue = deals.filter(d => d.stage === 'won').reduce((sum, d) => sum + d.value, 0);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white">صبح بخیر، علی 👋</h1>
           <p className="text-dark-200 text-sm mt-1">۲۰ شهریور ۱۴۰۵ — امروز ۱۲ معامله فعال دارید</p>
@@ -24,7 +24,7 @@ export default function Dashboard({ setActivePage, setSelectedDeal }) {
       </div>
 
       {/* Alert Cards */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <AlertCard
           icon={<AlertTriangle className="w-5 h-5 text-danger" />}
           count={stalledDeals.length}
@@ -60,9 +60,9 @@ export default function Dashboard({ setActivePage, setSelectedDeal }) {
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* AI Insights - Left Side (2 cols) */}
-        <div className="col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-6">
           {/* Next Best Actions */}
           <div className="bg-dark-800 border border-dark-600 rounded-xl p-5">
             <div className="flex items-center gap-2 mb-4">
@@ -88,7 +88,7 @@ export default function Dashboard({ setActivePage, setSelectedDeal }) {
                 const width = maxPipeline > 0 ? (stageValue / maxPipeline) * 100 : 0;
                 return (
                   <div key={stage.id} className="flex items-center gap-3">
-                    <div className="w-24 text-sm text-dark-200">{stage.label}</div>
+                    <div className="w-24 text-sm text-dark-200 shrink-0">{stage.label}</div>
                     <div className="flex-1 h-7 bg-dark-700 rounded-lg overflow-hidden relative">
                       <div
                         className="h-full rounded-lg transition-all duration-500"
@@ -173,11 +173,11 @@ export default function Dashboard({ setActivePage, setSelectedDeal }) {
 
 function AlertCard({ icon, count, label, sublabel, bgColor, borderColor }) {
   return (
-    <div className={`${bgColor} border ${borderColor} rounded-xl p-4 flex items-center gap-3`}>
-      <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}>
+    <div className={`${bgColor} border ${borderColor} rounded-xl p-4 flex items-center gap-3 transition-transform hover:scale-[1.02]`}>
+      <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}>
         {icon}
       </div>
-      <div>
+      <div className="min-w-0">
         <p className="text-white font-bold text-xl">{count}</p>
         <p className="text-dark-200 text-xs">{label}</p>
         <p className="text-dark-300 text-xs">{sublabel}</p>
@@ -202,12 +202,12 @@ function InsightRow({ insight, setActivePage, setSelectedDeal }) {
 
   return (
     <div className={`flex items-center justify-between p-3 ${bgColors[insight.type]} border-r-4 ${colors[insight.type]} rounded-lg`}>
-      <div className="flex-1">
+      <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <span className="text-white text-sm font-medium">{insight.title}</span>
           {insight.dealId && <span className="text-xs text-dark-300">|</span>}
         </div>
-        <p className="text-dark-200 text-xs mt-0.5">{insight.message}</p>
+        <p className="text-dark-200 text-xs mt-0.5 truncate">{insight.message}</p>
       </div>
       <button
         onClick={() => { if (insight.dealId) { setSelectedDeal(insight.dealId); setActivePage('deal'); } }}
@@ -228,7 +228,7 @@ function ScheduleItem({ time, title, subtitle, icon }) {
       <div className="w-8 h-8 bg-dark-700 rounded-lg flex items-center justify-center shrink-0">
         {icon}
       </div>
-      <div>
+      <div className="min-w-0">
         <p className="text-white text-sm">{title}</p>
         <p className="text-dark-300 text-xs">{subtitle}</p>
       </div>

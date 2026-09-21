@@ -1,10 +1,98 @@
-import { ArrowRight, Phone, Mail, Calendar, CheckCircle, Clock, AlertTriangle, TrendingUp, Zap, MessageSquare, FileText, Target, ChevronDown, User, Building } from 'lucide-react';
-import { deals, activities, stages, formatCurrency, getHealthColor, getHealthBg } from '../data';
+import { useState } from 'react';
+import { ArrowRight, Phone, Mail, Calendar, CheckCircle, Clock, AlertTriangle, TrendingUp, Zap, MessageSquare, FileText, Target, ChevronDown, User, Building, X } from 'lucide-react';
+import { deals as initialDeals, activities as initialActivities, stages, formatCurrency, getHealthColor, getHealthBg } from '../data';
 
-export default function DealDetail({ dealId, setActivePage }) {
-  const deal = deals.find(d => d.id === dealId) || deals[0];
-  const dealActivities = activities.filter(a => a.dealId === deal.id).sort((a, b) => b.id - a.id);
-  const currentStageIndex = stages.findIndex(s => s.id === deal.stage);
+// Smart gate criteria for stage advancement
+const stageGateRules = {
+  lead: {
+    label: 'ارزیابی صلاحیت',
+    checks: ['اطلاعات تماس تکمیل شده', 'نیاز اولیه شناسایی شده', 'بودجه تقریبی مشخص'],
+  },
+  qualified: {
+    label: 'تأیید نیاز',
+    checks: ['جلسه حضوری برگزار شده', 'نیازهای اصلی مستند شده', 'تصمیم‌گیرنده شناسایی شده'],
+  },
+  discovery: {
+    label: 'آماده ارائه پیشنهاد',
+    checks: ['پروپوزال آماده شده', 'قیمت‌گذاری نهایی شده', 'شرایط قرارداد مشخص'],
+  },
+  proposal: {
+    label: 'آماده مذاکره',
+    checks: ['پیشنهاد ارائه شده', 'بازخورد دریافت شده', 'تصمیم‌گیرنده در جریان'],
+  },
+  negotiation: {
+    label: 'آماده بستن قرارداد',
+    checks: ['شرایط نهایی توافق شده', 'موافقت مدیریت دریافت شده', 'آماده امضا'],
+  },
+};
+
+function getStageIndex(stageId) {
+  return stages.findIndex(s => s.id === stageId);
+}
+
+function getNextStage(currentStageId) {
+  const idx = getStageIndex(currentStageId);
+  if (idx >= 0 && idx < stages.length - 1) {
+    return stages[idx + 1];
+  }
+  return null;
+}
+
+export default function DealDetail({ dealId, setActivePage, showToast }) {
+  const [localDeals, setLocalDeals] = useState(initialDeals);
+  const [localActivities] = useState(initialActivities);
+  const [gateOpen, setGateOpen] = useState(false);
+  const [checkedItems, setCheckedItems] = useState({});
+  const [quickLogType, setQuickLogType] = useState(null);
+  const [quickLogTitle, setQuickLogTitle] = useState('');
+  const [quickLogDesc, setQuickLogDesc] = useState('');
+
+  const deal = localDeals.find(d => d.id === dealId) || localDeals[0];
+  const dealActivities = localActivities.filter(a => a.dealId === deal.id).sort((a, b) => b.id - a.id);
+  const currentStageIndex = getStageIndex(deal.stage);
+  const nextStage = getNextStage(deal.stage);
+
+  const advanceDeal = () => {
+    setLocalDeals(prev =>
+      prev.map(d =>
+        d.id === deal.id ? { ...d, stage: nextStage.id } : d
+      )
+    );
+    setGateOpen(false);
+    setCheckedItems({});
+    if (showToast) {
+      showToast('معامله با موفقیت ارتقا یافت', 'success');
+    }
+  };
+
+  const handleQuickLog = (type) => {
+    if (quickLogType === type) {
+      setQuickLogType(null);
+      setQuickLogTitle('');
+      setQuickLogDesc('');
+    } else {
+      setQuickLogType(type);
+      setQuickLogTitle('');
+      setQuickLogDesc('');
+    }
+  };
+
+  const submitQuickLog = () => {
+    if (quickLogTitle.trim()) {
+      if (showToast) {
+        showToast(`فعالیت "${quickLogTitle}" ثبت شد`, 'success');
+      }
+      setQuickLogType(null);
+      setQuickLogTitle('');
+      setQuickLogDesc('');
+    }
+  };
+
+  const toggleCheck = (idx) => {
+    setCheckedItems(prev => ({ ...prev, [idx]: !prev[idx] }));
+  };
+
+  const gateRule = stageGateRules[deal.stage];
 
   return (
     <div className="space-y-6">
@@ -19,7 +107,7 @@ export default function DealDetail({ dealId, setActivePage }) {
 
       {/* Deal Header */}
       <div className="bg-dark-800 border border-dark-600 rounded-xl p-6">
-        <div className="flex items-start justify-between">
+        <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-2">
               <h1 className="text-2xl font-bold text-white">{deal.title}</h1>
@@ -27,7 +115,7 @@ export default function DealDetail({ dealId, setActivePage }) {
                 سلامت: {deal.health}
               </span>
             </div>
-            <div className="flex items-center gap-4 text-dark-200 text-sm">
+            <div className="flex flex-wrap items-center gap-4 text-dark-200 text-sm">
               <div className="flex items-center gap-1.5">
                 <Building className="w-4 h-4" />
                 <span>{deal.company}</span>
@@ -42,7 +130,7 @@ export default function DealDetail({ dealId, setActivePage }) {
               </div>
             </div>
           </div>
-          <div className="text-left">
+          <div className="text-left sm:text-left text-right">
             <p className="text-3xl font-bold text-white">{formatCurrency(deal.value)}</p>
             <p className="text-dark-300 text-sm mt-1">احتمال موفقیت: <span className="text-accent-light font-medium">{deal.probability}%</span></p>
           </div>
@@ -73,7 +161,7 @@ export default function DealDetail({ dealId, setActivePage }) {
         </div>
 
         {/* Tags */}
-        <div className="flex items-center gap-2 mt-4">
+        <div className="flex flex-wrap items-center gap-2 mt-4">
           {deal.tags.map((tag) => (
             <span key={tag} className="px-2.5 py-1 bg-dark-700 text-dark-200 text-xs rounded-lg border border-dark-600">
               {tag}
@@ -82,10 +170,10 @@ export default function DealDetail({ dealId, setActivePage }) {
         </div>
       </div>
 
-      {/* Content Grid */}
-      <div className="grid grid-cols-3 gap-6">
+      {/* Content Grid — responsive: stacks on small screens */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Timeline (2 cols) */}
-        <div className="col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-6">
           {/* Activity Timeline */}
           <div className="bg-dark-800 border border-dark-600 rounded-xl p-5">
             <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
@@ -116,8 +204,14 @@ export default function DealDetail({ dealId, setActivePage }) {
                   ))}
                 </div>
               ) : (
-                <div className="py-8 text-center text-dark-400 text-sm">
-                  فعالیتی ثبت نشده
+                <div className="py-8 text-center text-dark-400 text-sm flex flex-col items-center gap-3">
+                  <p>هنوز فعالیتی ثبت نشده.</p>
+                  <button
+                    onClick={() => setQuickLogType('note')}
+                    className="text-accent-light hover:text-accent text-xs transition-colors"
+                  >
+                    ثبت اولین فعالیت
+                  </button>
                 </div>
               )}
             </div>
@@ -126,14 +220,73 @@ export default function DealDetail({ dealId, setActivePage }) {
           {/* Quick Log */}
           <div className="bg-dark-800 border border-dark-600 rounded-xl p-5">
             <h2 className="text-white font-semibold mb-3">ثبت فعالیت سریع</h2>
-            <div className="flex gap-2">
-              <QuickLogButton icon={<Phone className="w-4 h-4" />} label="تماس تلفنی" color="text-success" />
-              <QuickLogButton icon={<Mail className="w-4 h-4" />} label="ایمیل" color="text-info" />
-              <QuickLogButton icon={<Calendar className="w-4 h-4" />} label="جلسه" color="text-warning" />
-              <QuickLogButton icon={<MessageSquare className="w-4 h-4" />} label="یادداشت" color="text-accent-light" />
-              <QuickLogButton icon={<CheckCircle className="w-4 h-4" />} label="تسک" color="text-dark-200" />
+            <div className="flex flex-wrap gap-2">
+              {[
+                { type: 'call', icon: <Phone className="w-4 h-4" />, label: 'تماس تلفنی', color: 'text-success' },
+                { type: 'email', icon: <Mail className="w-4 h-4" />, label: 'ایمیل', color: 'text-info' },
+                { type: 'meeting', icon: <Calendar className="w-4 h-4" />, label: 'جلسه', color: 'text-warning' },
+                { type: 'note', icon: <MessageSquare className="w-4 h-4" />, label: 'یادداشت', color: 'text-accent-light' },
+                { type: 'task', icon: <CheckCircle className="w-4 h-4" />, label: 'تسک', color: 'text-dark-200' },
+              ].map((btn) => (
+                <button
+                  key={btn.type}
+                  onClick={() => handleQuickLog(btn.type)}
+                  className={`flex-1 min-w-[80px] py-2.5 rounded-lg flex flex-col items-center gap-1.5 transition-colors group border ${
+                    quickLogType === btn.type
+                      ? 'bg-accent/10 border-accent/30 text-white'
+                      : 'bg-dark-700 hover:bg-dark-600 border-dark-600'
+                  }`}
+                >
+                  <span className={`${btn.color} group-hover:scale-110 transition-transform`}>{btn.icon}</span>
+                  <span className="text-dark-200 text-xs">{btn.label}</span>
+                </button>
+              ))}
             </div>
+
+            {/* Inline Quick Log Form */}
+            {quickLogType && (
+              <div className="mt-4 bg-dark-700/50 border border-dark-600/50 rounded-lg p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-white text-sm font-medium">ثبت {quickLogType === 'call' ? 'تماس تلفنی' : quickLogType === 'email' ? 'ایمیل' : quickLogType === 'meeting' ? 'جلسه' : quickLogType === 'note' ? 'یادداشت' : 'تسک'}</p>
+                  <button onClick={() => { setQuickLogType(null); setQuickLogTitle(''); setQuickLogDesc(''); }} className="text-dark-300 hover:text-white transition-colors">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  placeholder="عنوان فعالیت"
+                  value={quickLogTitle}
+                  onChange={(e) => setQuickLogTitle(e.target.value)}
+                  className="w-full bg-dark-800 border border-dark-600 rounded-lg px-3 py-2 text-sm text-dark-100 placeholder-dark-300 focus:outline-none focus:border-accent transition-colors"
+                />
+                <textarea
+                  placeholder="توضیحات (اختیاری)"
+                  value={quickLogDesc}
+                  onChange={(e) => setQuickLogDesc(e.target.value)}
+                  rows={2}
+                  className="w-full bg-dark-800 border border-dark-600 rounded-lg px-3 py-2 text-sm text-dark-100 placeholder-dark-300 focus:outline-none focus:border-accent transition-colors resize-none"
+                />
+                <button
+                  onClick={submitQuickLog}
+                  disabled={!quickLogTitle.trim()}
+                  className="w-full py-2 bg-accent hover:bg-accent/80 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm rounded-lg transition-colors font-medium"
+                >
+                  ثبت فعالیت
+                </button>
+              </div>
+            )}
           </div>
+
+          {/* Advance Stage Button */}
+          {nextStage && (
+            <button
+              onClick={() => { setGateOpen(true); setCheckedItems({}); }}
+              className="w-full py-3 bg-accent hover:bg-accent/80 text-white text-sm font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
+            >
+              <TrendingUp className="w-4 h-4" />
+              رفتن به مرحله بعد ({nextStage.label})
+            </button>
+          )}
         </div>
 
         {/* Right Sidebar */}
@@ -215,16 +368,81 @@ export default function DealDetail({ dealId, setActivePage }) {
           </div>
         </div>
       </div>
-    </div>
-  );
-}
 
-function QuickLogButton({ icon, label, color }) {
-  return (
-    <button className="flex-1 py-2.5 bg-dark-700 hover:bg-dark-600 border border-dark-600 rounded-lg flex flex-col items-center gap-1.5 transition-colors group">
-      <span className={`${color} group-hover:scale-110 transition-transform`}>{icon}</span>
-      <span className="text-dark-200 text-xs">{label}</span>
-    </button>
+      {/* Smart Gate Dialog */}
+      {gateOpen && gateRule && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setGateOpen(false)} />
+          {/* Dialog */}
+          <div className="relative bg-dark-800 border border-dark-600 rounded-2xl w-full max-w-md shadow-2xl">
+            <div className="p-6">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Target className="w-5 h-5 text-accent-light" />
+                  <h3 className="text-white font-bold text-lg">دروازه هوشمند</h3>
+                </div>
+                <button
+                  onClick={() => setGateOpen(false)}
+                  className="text-dark-300 hover:text-white transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <p className="text-dark-200 text-sm mb-1">
+                مرحله فعلی: <span className="text-white font-medium">{stages.find(s => s.id === deal.stage)?.label}</span>
+              </p>
+              <p className="text-dark-200 text-sm mb-5">
+                مرحله بعدی: <span className="text-accent-light font-medium">{nextStage.label}</span>
+              </p>
+
+              {/* Gate Requirements */}
+              <div className="mb-6">
+                <p className="text-dark-300 text-xs font-medium mb-3">{gateRule.label} — معیارهای ارتقا:</p>
+                <div className="space-y-2">
+                  {gateRule.checks.map((check, idx) => (
+                    <label
+                      key={idx}
+                      className="flex items-center gap-3 cursor-pointer group"
+                      onClick={() => toggleCheck(idx)}
+                    >
+                      <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${
+                        checkedItems[idx]
+                          ? 'bg-accent border-accent'
+                          : 'border-dark-500 group-hover:border-dark-400'
+                      }`}>
+                        {checkedItems[idx] && <CheckCircle className="w-3.5 h-3.5 text-white" />}
+                      </div>
+                      <span className={`text-sm transition-colors ${checkedItems[idx] ? 'text-white' : 'text-dark-200'}`}>
+                        {check}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setGateOpen(false)}
+                  className="flex-1 py-2.5 bg-dark-700 hover:bg-dark-600 text-dark-200 text-sm rounded-lg transition-colors border border-dark-600"
+                >
+                  انصراف
+                </button>
+                <button
+                  onClick={advanceDeal}
+                  className="flex-1 py-2.5 bg-accent hover:bg-accent/80 text-white text-sm font-medium rounded-lg transition-colors"
+                >
+                  ارتقای معامله
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 

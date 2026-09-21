@@ -261,3 +261,60 @@ export const getHealthBg = (health) => {
   if (health >= 40) return 'bg-warning/10 border-warning/20';
   return 'bg-danger/10 border-danger/20';
 };
+
+// Smart gate questions for each stage transition
+// Each transition has questions that must be answered 'yes' to advance
+export const smartGates = {
+  'lead→qualified': {
+    title: 'تایید صلاحیت سرنخ',
+    description: 'برای انتقال به مرحله «تایید شده»، لطفاً موارد زیر را تایید کنید:',
+    questions: [
+      { id: 'q1', text: 'آیا با مخاطب صحبت کرده‌اید؟', autoCheck: null },
+      { id: 'q2', text: 'آیا اطلاعات تماس تکمیل است؟', autoCheck: 'contactComplete' },
+      { id: 'q3', text: 'آیا نیاز اولیه مشتری مشخص شده؟', autoCheck: null },
+    ],
+  },
+  'qualified→discovery': {
+    title: 'شروع کشف نیاز',
+    description: 'برای ورود به مرحله «کشف نیاز»:',
+    questions: [
+      { id: 'q1', text: 'آیا جلسه معرفی برگزار شده؟', autoCheck: null },
+      { id: 'q2', text: 'آیا علاقه‌مندی مشتری تایید شده؟', autoCheck: null },
+    ],
+  },
+  'discovery→proposal': {
+    title: 'ارسال پیشنهاد',
+    description: 'برای ارسال پیشنهاد:',
+    questions: [
+      { id: 'q1', text: 'آیا نیازهای مشتری کاملاً شناسایی شده؟', autoCheck: null },
+      { id: 'q2', text: 'آیا بودجه مشتری تایید شده؟', autoCheck: null },
+      { id: 'q3', text: 'آیا حداقل ۳ فعالیت ثبت شده؟', autoCheck: 'minActivities' },
+    ],
+  },
+  'proposal→negotiation': {
+    title: 'ورود به مذاکره',
+    description: 'برای شروع مذاکره:',
+    questions: [
+      { id: 'q1', text: 'آیا پیشنهاد ارسال شده؟', autoCheck: null },
+      { id: 'q2', text: 'آیا بازخورد مشتری دریافت شده؟', autoCheck: null },
+    ],
+  },
+  'negotiation→won': {
+    title: 'بستن معامله 🎉',
+    description: 'تبریک! برای نهایی کردن:',
+    questions: [
+      { id: 'q1', text: 'آیا شرایط نهایی توافق شده؟', autoCheck: null },
+      { id: 'q2', text: 'آیا قرارداد امضا شده؟', autoCheck: null },
+    ],
+  },
+};
+
+// Next stage probability mapping
+export const stageProbabilities = {
+  lead: 10,
+  qualified: 25,
+  discovery: 40,
+  proposal: 55,
+  negotiation: 70,
+  won: 100,
+};
